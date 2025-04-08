@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catways</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <%- include('components/header') %>
+
+    <h1>Gestion des Catways</h1>
+    <div class="container">
+        <h1 class="mt-4">Liste des Catways</h1>
+        <a href="/catways/new" class="btn btn-success">Ajouter un catway</a>
+        <table class="table mt-3">
+          <thead>
+            <tr>
+              <th scope="col">Numéro</th>
+              <th scope="col">Type</th>
+              <th scope="col">État</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% catways.forEach(function(catway) { %>
+              <tr>
+                <td><%= catway.catwayNumber %></td>
+                <td><%= catway.catwayType %></td>
+                <td><%= catway.catwayState %></td>
+                <td>
+                  <a href="/catways/<%= catway._id %>" class="btn btn-info">Voir</a>
+                  <a href="/catways/edit/<%= catway._id %>" class="btn btn-warning">Modifier</a>
+                  <a href="/catways/delete/<%= catway._id %>" class="btn btn-danger">Supprimer</a>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+   
+</body>
+</html>
