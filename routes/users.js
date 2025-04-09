@@ -8,7 +8,7 @@ const router = express.Router();
 const JWT_SECRET = 'your_jwt_secret';
 
 // Créer un utilisateur
-router.post('/', async (req, res) => {
+router.post('/create', async (req, res) => {
   const { username, email, password } = req.body;
 
   // Vérification de l'existence de l'utilisateur
@@ -23,17 +23,27 @@ router.post('/', async (req, res) => {
   try {
     const newUser = new User({ username, email, password: hashedPassword });
     await newUser.save();
-    res.status(201).json(newUser);
+  
+    // Stocker l'utilisateur en session
+    req.session.user = {
+      _id: newUser._id,
+      username: newUser.username,
+      email: newUser.email
+    };
+  
+    // Redirection vers la page d'accueil ou dashboard
+    res.redirect('/dashboard'); // ou '/dashboard' si tu préfères
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error('Erreur lors de la création du compte :', error);
+    res.status(500).render('signup', { errorMessage: 'Erreur lors de la création du compte.' });
   }
-});
+});  // <-- Fermeture manquante ici
 
 // Lister tous les utilisateurs
 router.get('/', async (req, res) => {
   try {
-    const users = await User.find();
-    res.json(users);
+    const users = await User.find();  // Récupère tous les utilisateurs de la base
+    res.render('users', { users });  // Envoie les utilisateurs à la vue 'users.ejs'
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -110,4 +120,3 @@ router.get('/logout', (req, res) => {
 });
 
 module.exports = router;
-

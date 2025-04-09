@@ -23,6 +23,11 @@ const ReservationSchema = new mongoose.Schema({
   endDate: {
     type: Date,
     required: true
+  },
+  userId: {  // 🔥 Ajout du lien vers l'utilisateur connecté
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   }
 });
 

@@ -5,7 +5,7 @@ const path = require("path");
 const Reservation = require("./models/Reservation");
 
 // 1. Connexion à MongoDB
-const MONGO_URI = "mongodb://127.0.0.1:27017/portgermain"; // Change si besoin
+const MONGO_URI = "mongodb://127.0.0.1:27017/RUSSEL/RESERVATIONS"; // Change si besoin
 mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,

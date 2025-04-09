@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     const reservations = await Reservation.find()
       .skip((page - 1) * limit)
       .limit(limit);
-    res.json(reservations);
+      res.render('reservations', { reservations });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -33,18 +33,33 @@ router.get('/:id', async (req, res) => {
 // 3. Ajouter une réservation
 router.post('/', async (req, res) => {
   const { catwayNumber, clientName, boatName, startDate, endDate } = req.body;
+
+  if (!req.session.user) {
+    return res.status(401).json({ error: 'Non autorisé : utilisateur non connecté' });
+  }
+
   if (new Date(startDate) >= new Date(endDate)) {
     return res.status(400).json({ error: 'La date de début doit être antérieure à la date de fin' });
   }
 
   try {
-    const newReservation = new Reservation({ catwayNumber, clientName, boatName, startDate, endDate });
+    const newReservation = new Reservation({
+      catwayNumber,
+      clientName,
+      boatName,
+      startDate,
+      endDate,
+      userId: req.session.user._id  // 👈 Ajout de l'utilisateur
+    });
+
     await newReservation.save();
     res.status(201).json(newReservation);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
+
+
 
 // 4. Modifier une réservation
 router.put('/:id', async (req, res) => {
@@ -71,6 +86,23 @@ router.delete('/:id', async (req, res) => {
     res.json({ message: 'Reservation deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/my-reservations', async (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/');
+  }
+
+  try {
+    const reservations = await Reservation.find({ userId: req.session.user._id });
+    res.render('dashboard', {
+      user: req.session.user,
+      reservations,
+      today: new Date().toLocaleDateString('fr-FR')
+    });
+  } catch (err) {
+    res.status(500).send('Erreur lors de la récupération des réservations');
   }
 });
 

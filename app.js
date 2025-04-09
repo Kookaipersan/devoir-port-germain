@@ -3,82 +3,87 @@ const connectDB = require('./config/db');  // Importation de la fonction de conn
 const mongoose = require('mongoose');
 const path = require('path');
 const app = express();
-const filePath = path.join(__dirname, '..', 'data', 'catways.json');
-const catwaysRouter = require('./routes/catways');
 const session = require('express-session');
+
+// Importation des modèles
+const Catway = require('./models/Catway');
+const Reservation = require('./models/Reservation');
+
+// Importation des routes
+const catwaysRouter = require('./routes/catways');
+const authRouter = require('./routes/auth');  // Importer le fichier auth.js
+const userRoutes = require('./routes/users');
+const reservationsRouter = require('./routes/reservations');  // Importer les routes des réservations
 
 // Connexion à MongoDB
 connectDB();
 
 mongoose.connection.once('open', () => {
     console.log('Connexion à MongoDB réussie');
-  }).on('error', (error) => {
+}).on('error', (error) => {
     console.log('Erreur de connexion MongoDB:', error);
-  });
-
-// Importation des modèles
-const Catway = require('./models/Catway');
-const Reservation = require('./models/Reservation');
-
-// Configuration d'EJS comme moteur de template
-app.set('view engine', 'ejs');
-app.set('views', './views'); // répertoire où seront stockés les fichiers .ejs
-
-// Autres configurations...
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use('/catways', catwaysRouter);
-
-// Route pour la page d'accueil
-app.get('/', (req, res) => {
-    res.render('home');
 });
 
-// Route pour le tableau de bord
-app.get('/dashboard', (req, res) => {
-    if (!req.user) {  // Vérifier si l'utilisateur est connecté
-        return res.redirect('/');
-    }
-
-    // Récupérer les réservations pour l'utilisateur connecté
-    Reservation.find({ userId: req.user._id }, (err, reservations) => {
-        res.render('dashboard', { user: req.user, reservations });
-    });
-});
-
-// Routes pour les catways (listage, création, modification, suppression)
-app.get('/catways', (req, res) => {
-    Catway.find({}, (err, catways) => {
-        res.render('catways', { catways });
-    });
-});
-
-app.post('/catways/new', (req, res) => {
-    const newCatway = new Catway({ number: req.body.number });
-    newCatway.save().then(() => {
-        res.redirect('/catways');
-    });
-});
-
-// Exemple de modification et suppression de catway, tu peux faire de même pour les réservations et les utilisateurs.
-
-// Importer les routes pour les catways et les réservations
-const catwaysRoutes = require('./routes/catways');
-const reservationsRoutes = require('./routes/reservations');
-
-// Utiliser les routes
-app.use('/catways', catwaysRoutes); // Toutes les routes liées aux catways
-app.use('/reservations', reservationsRoutes); // Toutes les routes liées aux réservations
-
+// Configuration de la session
 app.use(session({
     secret: 'votre_clé_secrète',
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false }  // mettez `secure: true` si vous utilisez HTTPS
 }));
+app.get('/signup', (req, res) => {
+    res.render('signup');  // Assurez-vous que le fichier signup.ejs existe dans le répertoire views
+});
+
+// Configuration d'EJS comme moteur de template
+app.set('view engine', 'ejs');
+app.set('views', './views'); // répertoire où seront stockés les fichiers .ejs
+
+// Middleware pour analyser les corps des requêtes
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Utilisation des routes
+app.use('/catways', catwaysRouter);
+app.use('/login', authRouter);  // Définir la route /login
+app.use('/users', userRoutes);  // Enregistre les routes pour /users
+app.use('/reservations', reservationsRouter);  // Enregistre les routes pour /reservations
+
+// Route pour la page d'accueil
+app.get('/', (req, res) => {
+    res.render('home', {
+        user: req.session.user,
+        errorMessage: null,  
+    });
+});
+
+
+// Route pour le tableau de bord
+app.get('/dashboard', async (req, res) => {
+    if (!req.session.user) {  // Vérifier si l'utilisateur est connecté
+        return res.redirect('/');
+    }
+    
+
+    // Récupérer les réservations de l'utilisateur connecté
+    try {
+        const reservations = await Reservation.find();
+        const currentDate = new Date();  // Date du jour
+        res.render('dashboard', {
+            user: req.session.user,  // Informations sur l'utilisateur connecté
+            currentDate: currentDate, // Date du jour
+            reservations: reservations  // Réservations en cours de l'utilisateur
+        });
+    } catch (err) {
+        console.error('Erreur lors de la récupération des réservations:', err);
+        res.status(500).render('dashboard', {
+            errorMessage: 'Erreur serveur. Impossible de récupérer les réservations.'
+        });
+    }
+});
 
 // Démarrage du serveur
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Serveur démarré sur http://localhost:${PORT}`);
+    console.log(`Serveur démarré sur http://localhost:${PORT}`);
 });

@@ -8,7 +8,7 @@ const path = require('path');
 router.get('/', async (req, res) => {
   try {
     const catways = await Catway.find();
-    res.json(catways);
+    res.render('catways', {catways});
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

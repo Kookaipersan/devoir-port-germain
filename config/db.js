@@ -1,24 +1,22 @@
-const mongoose = require('mongoose');
 require('dotenv').config();
+const mongoose = require('mongoose');
 
 const connectDB = async () => {
-  const uri = process.env.MONGO_URI;
-
-  if (!uri) {
-    console.warn('⚠️ MONGO_URI non défini. La connexion à MongoDB est ignorée.');
-    return;
-  }
-
   try {
-    await mongoose.connect(uri, {
+    await mongoose.connect('mongodb://localhost:27017/RUSSEL', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log('✅ Connecté à MongoDB');
-  } catch (err) {
-    console.error('❌ Erreur de connexion MongoDB:', err);
+    console.log('MongoDB connecté');
+  } catch (error) {
+    console.error('Erreur de connexion MongoDB:', error);
+    process.exit(1);  // Arrêter l'application si la connexion échoue
   }
 };
 
 module.exports = connectDB;
+
+
+
+
 
