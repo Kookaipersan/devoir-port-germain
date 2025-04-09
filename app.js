@@ -52,7 +52,7 @@ app.use('/reservations', reservationsRouter);  // Enregistre les routes pour /re
 // Route pour la page d'accueil
 app.get('/', (req, res) => {
     res.render('home', {
-        user: req.session.user,
+        user: req.session.user || null,
         errorMessage: null,  
     });
 });

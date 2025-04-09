@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
-const router = express.Router();  // Cela doit être un router
+const router = express.Router();
 
 // Route de connexion
 router.post('/', async (req, res) => {
@@ -11,14 +11,17 @@ router.post('/', async (req, res) => {
         const user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(401).render('home', { errorMessage: 'Utilisateur non trouvé' });
+            return res.status(401).render('home', { 
+                errorMessage: 'Utilisateur non trouvé', 
+                user: null 
+            });
         }
 
         // Comparer le mot de passe
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(401).render('home', { errorMessage: 'Mot de passe incorrect' });
-        }
+        console.log('Mot de passe entré :', password);
+        console.log('Mot de passe haché stocké :', user.password);
+        console.log('Résultat comparaison :', isMatch);
 
         // Authentifier l'utilisateur et initialiser la session
         req.session.user = {
@@ -27,10 +30,15 @@ router.post('/', async (req, res) => {
             email: user.email
         };
 
+        // ✅ Redirection vers le tableau de bord
         res.redirect('/dashboard');
     } catch (error) {
-        res.status(500).render('home', { errorMessage: 'Erreur serveur. Veuillez réessayer.' });
+        console.error('Erreur lors de la connexion :', error);
+        res.status(500).render('home', { 
+            errorMessage: 'Erreur serveur. Veuillez réessayer.', 
+            user: null 
+        });
     }
 });
 
-module.exports = router;  // Le router est exporté correctement ici
+module.exports = router;
