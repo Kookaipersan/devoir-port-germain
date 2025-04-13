@@ -25,7 +25,8 @@
                     <form action="/login" method="POST">
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" value="<%= user ? user.email : '' %>" required />
+                            <input type="email" class="form-control" id="email" name="email"
+                                value="<%= user ? user.email : '' %>" required />
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Mot de passe</label>
@@ -34,8 +35,11 @@
                         <button type="submit" class="btn btn-primary">Se connecter</button>
                     </form>
                     <br />
-                    <button onclick="window.location.href='/signup'" class="btn btn-primary">S' inscrire  Ici </button><br>
-                    <a href="/documentation" class="btn btn-link">Documentation API</a>
+                    <button onclick="window.location.href='/signup'" class="btn btn-primary">S' inscrire Ici
+                    </button><br>
+                    <!-- Dans views/home.ejs -->
+                    <a href="/api-docs" class="btn btn-link" target="_blank">Documentation API</a>
+
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

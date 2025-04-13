@@ -4,7 +4,18 @@ const Catway = require('../models/Catway');
 const fs = require('fs');
 const path = require('path');
 const Reservation = require('../models/Reservation');
-
+/**
+ * @swagger
+ * /catways:
+ *   get:
+ *     summary: Récupère la liste des catways
+ *     tags: [Catways]
+ *     responses:
+ *       200:
+ *         description: Liste des catways
+ *       500:
+ *         description: Erreur serveur
+ */
 // 1. Liste des catways
 router.get('/', async (req, res) => {
   try {
@@ -14,11 +25,43 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+/**
+ * @swagger
+ * /catways/new:
+ *   get:
+ *     summary: Affiche le formulaire d’ajout de catway
+ *     tags: [Catways]
+ *     responses:
+ *       200:
+ *         description: Formulaire affiché
+ */
 
 // 3. Ajouter un catway (Formulaire d'ajout)
 router.get('/new', (req, res) => {
   res.render('new'); // Rendre le formulaire d'ajout
 });
+
+/**
+ * @swagger
+ * /catways/{id}:
+ *   get:
+ *     summary: Récupère un catway spécifique par ID
+ *     tags: [Catways]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID du catway
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Détails du catway
+ *       404:
+ *         description: Catway non trouvé
+ *       500:
+ *         description: Erreur serveur
+ */
 
 // 2. Détails d'un catway
 router.get('/:id', async (req, res) => {
@@ -31,7 +74,34 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-
+/**
+ * @swagger
+ * /catways:
+ *   post:
+ *     summary: Ajoute un nouveau catway
+ *     tags: [Catways]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               catwayNumber:
+ *                 type: string
+ *                 example: A12
+ *               catwayType:
+ *                 type: string
+ *                 example: Type 1
+ *               catwayState:
+ *                 type: string
+ *                 example: Disponible
+ *     responses:
+ *       302:
+ *         description: Redirection vers la liste des catways
+ *       400:
+ *         description: Erreur de validation
+ */
 
 // 4. Ajouter un catway (Traitement du formulaire)
 router.post('/', async (req, res) => {
@@ -45,6 +115,29 @@ router.post('/', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /catways/edit/{id}:
+ *   get:
+ *     summary: Affiche le formulaire d’édition d’un catway
+ *     tags: [Catways]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID du catway à modifier
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Formulaire d’édition affiché
+ *       404:
+ *         description: Catway introuvable
+ *       500:
+ *         description: Erreur serveur
+ */
+
+
 // 5. Modifier un catway
 router.get('/edit/:id', async (req, res) => {
   try {
@@ -55,6 +148,39 @@ router.get('/edit/:id', async (req, res) => {
     res.status(500).send('Erreur serveur');
   }
 });
+
+/**
+ * @swagger
+ * /catways/{id}:
+ *   put:
+ *     summary: Met à jour l’état d’un catway
+ *     tags: [Catways]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID du catway à mettre à jour
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               catwayState:
+ *                 type: string
+ *                 example: Indisponible
+ *     responses:
+ *       200:
+ *         description: Catway mis à jour
+ *       400:
+ *         description: Erreur de validation
+ *       404:
+ *         description: Catway non trouvé
+ */
+
 
 // 6. Modifier un catway (seul l'état peut être modifié)
 router.put('/:id', async (req, res) => {
@@ -72,6 +198,29 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+
+/**
+ * @swagger
+ * /catways/{id}:
+ *   delete:
+ *     summary: Supprime un catway par ID
+ *     tags: [Catways]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID du catway
+ *         schema:
+ *           type: string
+ *     responses:
+ *       302:
+ *         description: Redirection après suppression
+ *       404:
+ *         description: Catway non trouvé
+ *       500:
+ *         description: Erreur serveur
+ */
+
 // 7. Supprimer un catway
 router.delete('/:id', async (req, res) => {
   try {
@@ -82,6 +231,19 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+/**
+ * @swagger
+ * /catways/import/json:
+ *   get:
+ *     summary: Importe les catways depuis un fichier JSON
+ *     tags: [Catways]
+ *     responses:
+ *       200:
+ *         description: Catways importés avec succès
+ *       500:
+ *         description: Erreur lors de l’importation
+ */
 
 // 8. Importer les catways depuis le fichier catways.json
 router.get('/import/json', async (req, res) => {

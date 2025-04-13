@@ -4,7 +4,25 @@ const Reservation = require('../models/Reservation');
 const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
-
+/**
+ * @swagger
+ * /catways/{catwayId}/reservations:
+ *   get:
+ *     summary: Récupère toutes les réservations d'un catway
+ *     tags: [Reservations]
+ *     parameters:
+ *       - in: path
+ *         name: catwayId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du catway
+ *     responses:
+ *       200:
+ *         description: Liste des réservations affichée dans la vue
+ *       500:
+ *         description: Erreur serveur
+ */
 // -----------------------------
 // LISTE DES RÉSERVATIONS PAR CATWAY
 // -----------------------------
@@ -28,6 +46,42 @@ router.get('/catways/:id/reservations/new', (req, res) => {
 router.get('/reservations/new', (req, res) => {
   res.render('reservations/newReservation');
 });
+
+/**
+ * @swagger
+ * /catways/{catwayId}/reservations:
+ *   post:
+ *     summary: Créer une réservation pour un catway
+ *     tags: [Reservations]
+ *     parameters:
+ *       - in: path
+ *         name: catwayId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               clientName:
+ *                 type: string
+ *               boatName:
+ *                 type: string
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *     responses:
+ *       302:
+ *         description: Redirection vers les réservations du catway
+ *       500:
+ *         description: Erreur lors de la création
+ */
 
 // -----------------------------
 // AJOUTER UNE NOUVELLE RÉSERVATION
@@ -56,7 +110,47 @@ router.post('/catways/:id/reservations', async (req, res) => {
     res.status(500).send('Erreur lors de la création de la réservation.');
   }
 });
-
+/**
+ * @swagger
+ * /reservations/catways/{id}/reservations:
+ *   post:
+ *     summary: Ajouter une nouvelle réservation à un catway
+ *     tags: [Reservations]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID du catway
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - clientName
+ *               - boatName
+ *               - startDate
+ *               - endDate
+ *             properties:
+ *               clientName:
+ *                 type: string
+ *               boatName:
+ *                 type: string
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *     responses:
+ *       302:
+ *         description: Redirection après succès
+ *       500:
+ *         description: Erreur lors de la création
+ */
 router.post('/reservations', async (req, res) => {
   const { clientName, boatName, startDate, endDate } = req.body;
 
@@ -75,6 +169,36 @@ router.post('/reservations', async (req, res) => {
     res.status(500).send('Erreur lors de la création de la réservation.');
   }
 });
+
+/**
+ * @swagger
+ * /reservations/catways/{catwayId}/reservations/edit/{id}:
+ *   get:
+ *     summary: Formulaire pour modifier une réservation liée à un catway
+ *     tags: [Reservations]
+ *     parameters:
+ *       - in: path
+ *         name: catwayId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du catway
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la réservation
+ *     responses:
+ *       200:
+ *         description: Formulaire d’édition affiché
+ *       400:
+ *         description: ID invalide
+ *       404:
+ *         description: Réservation introuvable
+ *       500:
+ *         description: Erreur serveur
+ */
 
 // -----------------------------
 // MODIFIER UNE RÉSERVATION
@@ -114,6 +238,47 @@ router.get('/edit/:id', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /reservations/{id}:
+ *   put:
+ *     summary: Mettre à jour une réservation
+ *     tags: [Reservations]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID de la réservation à mettre à jour
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               catwayNumber:
+ *                 type: string
+ *               clientName:
+ *                 type: string
+ *               boatName:
+ *                 type: string
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *     responses:
+ *       200:
+ *         description: Réservation mise à jour avec succès
+ *       400:
+ *         description: Requête invalide
+ *       404:
+ *         description: Réservation non trouvée
+ */
+
 router.put('/:id', async (req, res) => {
   const { catwayNumber, clientName, boatName, startDate, endDate } = req.body;
 
@@ -145,7 +310,27 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-
+/**
+ * @swagger
+ * /reservations/{id}:
+ *   delete:
+ *     summary: Supprimer une réservation par ID
+ *     tags: [Reservations]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID de la réservation
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Réservation supprimée avec succès
+ *       404:
+ *         description: Réservation introuvable
+ *       500:
+ *         description: Erreur serveur
+ */
 // -----------------------------
 // SUPPRIMER UNE RÉSERVATION
 // -----------------------------
@@ -158,6 +343,36 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+/**
+ * @swagger
+ * /reservations/catways/{catwayId}/reservations/{id}:
+ *   get:
+ *     summary: Obtenir les détails d’une réservation spécifique liée à un catway
+ *     tags: [Reservations]
+ *     parameters:
+ *       - in: path
+ *         name: catwayId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du catway
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la réservation
+ *     responses:
+ *       200:
+ *         description: Détails de la réservation
+ *       400:
+ *         description: ID invalide
+ *       404:
+ *         description: Réservation introuvable
+ *       500:
+ *         description: Erreur serveur
+ */
 
 // -----------------------------
 // DÉTAIL D'UNE RÉSERVATION
@@ -179,6 +394,30 @@ router.get('/catways/:catwayId/reservations/:id', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /reservations/{id}:
+ *   get:
+ *     summary: Obtenir les détails d'une réservation par son ID
+ *     tags: [Reservations]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la réservation
+ *     responses:
+ *       200:
+ *         description: Détails de la réservation
+ *       400:
+ *         description: ID invalide
+ *       404:
+ *         description: Réservation non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
+
 router.get('/:id', async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).send('ID de réservation invalide.');
@@ -193,6 +432,30 @@ router.get('/:id', async (req, res) => {
     res.status(500).send('Erreur serveur');
   }
 });
+
+/**
+ * @swagger
+ * /reservations:
+ *   get:
+ *     summary: Récupère la liste paginée de toutes les réservations
+ *     tags: [Reservations]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Page à afficher
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Nombre de résultats par page
+ *     responses:
+ *       200:
+ *         description: Liste des réservations
+ *       500:
+ *         description: Erreur serveur
+ */
 
 // -----------------------------
 // LISTE PAGINÉE
@@ -213,6 +476,23 @@ router.get('/', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /my-reservations:
+ *   get:
+ *     summary: Liste les réservations de l'utilisateur connecté
+ *     tags: [Reservations]
+ *     security:
+ *       - sessionAuth: []
+ *     responses:
+ *       200:
+ *         description: Réservations de l'utilisateur affichées dans le dashboard
+ *       302:
+ *         description: Redirection vers /login si non connecté
+ *       500:
+ *         description: Erreur serveur
+ */
+
 // -----------------------------
 // MES RÉSERVATIONS (utilisateur connecté)
 // -----------------------------
@@ -232,6 +512,21 @@ router.get('/my-reservations', async (req, res) => {
     res.status(500).send('Erreur lors de la récupération des réservations');
   }
 });
+
+/**
+ * @swagger
+ * /reservations/import/json:
+ *   get:
+ *     summary: Importe des réservations depuis un fichier JSON local
+ *     tags: [Reservations]
+ *     responses:
+ *       200:
+ *         description: Importation réussie
+ *       404:
+ *         description: Fichier non trouvé
+ *       500:
+ *         description: Erreur serveur
+ */
 
 // -----------------------------
 // IMPORT JSON
