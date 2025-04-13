@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Détails du Catway</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <%- include('components/header') %>
+
+    <div class="container mt-5">
+        <h1>Détails du Catway</h1>
+        <table class="table table-bordered">
+            <tr>
+                <th>ID</th>
+                <td><%= catway._id %></td>
+            </tr>
+            <tr>
+                <th>Numéro</th>
+                <td><%= catway.catwayNumber %></td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td><%= catway.catwayType %></td>
+            </tr>
+            <tr>
+                <th>État</th>
+                <td><%= catway.catwayState %></td>
+            </tr>
+        </table>
+        <a href="/catways" class="btn btn-secondary">Retour</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

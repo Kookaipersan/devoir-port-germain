@@ -1,9 +1,12 @@
 // models/Reservation.js
+
 const mongoose = require('mongoose');
 
 const ReservationSchema = new mongoose.Schema({
+  // catwayNumber doit être une référence vers le modèle Catway, pas un simple nombre
   catwayNumber: {
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId, // Remplacer Number par ObjectId
+    ref: 'Catway',  // Référence au modèle Catway
     required: true
   },
   clientName: {
@@ -24,7 +27,7 @@ const ReservationSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
-  userId: {  // 🔥 Ajout du lien vers l'utilisateur connecté
+  userId: {  // Lien vers l'utilisateur connecté
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
@@ -32,3 +35,5 @@ const ReservationSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('Reservation', ReservationSchema);
+
+

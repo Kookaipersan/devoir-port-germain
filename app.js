@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const app = express();
 const session = require('express-session');
+const methodOverride = require('method-override');
 
 // Importation des modèles
 const Catway = require('./models/Catway');
@@ -37,11 +38,12 @@ app.get('/signup', (req, res) => {
 
 // Configuration d'EJS comme moteur de template
 app.set('view engine', 'ejs');
-app.set('views', './views'); // répertoire où seront stockés les fichiers .ejs
+app.set('views', path.join(__dirname, 'views'));  // Spécification du dossier 'views'
 
 // Middleware pour analyser les corps des requêtes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride('_method'));
 
 // Utilisation des routes
 app.use('/catways', catwaysRouter);

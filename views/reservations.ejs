@@ -9,38 +9,70 @@
 <body>
     <%- include('components/header') %>
 
-    <div class="container mt-5">
-        <h1>Liste des réservations</h1>
-        
-        <% if (reservations && reservations.length > 0) { %>
-            <table class="table">
-                <thead>
+<div class="container mt-5">
+    <h1>Liste des réservations</h1>
+
+    <% if (typeof catwayId !== 'undefined' && catwayId) { %>
+        <!-- Si catwayId est défini, affiche le lien de création de réservation spécifique à ce catway -->
+        <a href="/catways/<%= catwayId %>/reservations/new" class="btn btn-primary mb-3">Créer une réservation</a>
+    <% } else { %>
+        <!-- Sinon, affiche un lien générique pour créer une réservation -->
+        <a href="/reservations/new" class="btn btn-primary mb-3">Créer une réservation</a>
+    <% } %>
+
+    <% if (reservations && reservations.length > 0) { %>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Client</th>
+                    <th>Bateau</th>
+                    <th>Date de début</th>
+                    <th>Date de fin</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% reservations.forEach(reservation => { %>
                     <tr>
-                        <th scope="col">Client</th>
-                        <th scope="col">Bateau</th>
-                        <th scope="col">Catway</th>
-                        <th scope="col">Date de début</th>
-                        <th scope="col">Date de fin</th>
+                        <td><%= reservation.clientName %></td>
+                        <td><%= reservation.boatName %></td>
+                        <td><%= reservation.startDate.toLocaleDateString('fr-FR') %></td>
+                        <td><%= reservation.endDate.toLocaleDateString('fr-FR') %></td>
+                        <td>
+                            <% if (reservation.catwayNumber && reservation.catwayNumber._id) { %>
+                                <a href="/catways/<%= reservation.catwayNumber._id %>/reservations/<%= reservation._id %>" class="btn btn-info btn-sm">Voir</a>
+                                <a href="/catways/<%= reservation.catwayNumber._id %>/reservations/edit/<%= reservation._id %>" class="btn btn-warning">Modifier</a>
+
+                                <form action="/catways/<%= reservation.catwayNumber._id %>/reservations/<%= reservation._id %>/delete" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                                </form>
+                            <% } else { %>
+                                <a href="/reservations/<%= reservation._id %>" class="btn btn-info btn-sm">Voir</a>
+                                <a href="/reservations/edit/<%= reservation._id %>" class="btn btn-warning">Modifier</a>
+
+
+                                <form action="/reservations/<%= reservation._id %>?_method=DELETE" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                                </form>
+                            <% } %>
+                            
+                            
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    <% reservations.forEach(function(reservation) { %>
-                        <tr>
-                            <td><%= reservation.clientName %></td>
-                            <td><%= reservation.boatName %></td>
-                            <td><%= reservation.catwayNumber %></td>
-                            <td><%= new Date(reservation.startDate).toLocaleDateString() %></td>
-                            <td><%= new Date(reservation.endDate).toLocaleDateString() %></td>
-                        </tr>
-                    <% }); %>
-                </tbody>
-            </table>
-        <% } else { %>
-            <p>Aucune réservation en cours.</p>
-        <% } %>
-    </div>
+                <% }); %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <p>Aucune réservation trouvée</p>
+    <% } %>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 </body>
-</html>
+
+
+</html> 
+
+   
+     

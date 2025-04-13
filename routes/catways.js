@@ -3,15 +3,21 @@ const router = express.Router();
 const Catway = require('../models/Catway');
 const fs = require('fs');
 const path = require('path');
+const Reservation = require('../models/Reservation');
 
 // 1. Liste des catways
 router.get('/', async (req, res) => {
   try {
     const catways = await Catway.find();
-    res.render('catways', {catways});
+    res.render('catways', { catways });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
+// 3. Ajouter un catway (Formulaire d'ajout)
+router.get('/new', (req, res) => {
+  res.render('new'); // Rendre le formulaire d'ajout
 });
 
 // 2. Détails d'un catway
@@ -19,25 +25,38 @@ router.get('/:id', async (req, res) => {
   try {
     const catway = await Catway.findById(req.params.id);
     if (!catway) return res.status(404).json({ error: 'Catway not found' });
-    res.json(catway);
+    res.render('catwaysDetails', { catway });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// 3. Ajouter un catway
+
+
+// 4. Ajouter un catway (Traitement du formulaire)
 router.post('/', async (req, res) => {
   const { catwayNumber, catwayType, catwayState } = req.body;
   try {
     const newCatway = new Catway({ catwayNumber, catwayType, catwayState });
     await newCatway.save();
-    res.status(201).json(newCatway);
+    res.redirect('/catways'); // Rediriger vers la liste des catways après l'ajout
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
-// 4. Modifier un catway (seul l'état peut être modifié)
+// 5. Modifier un catway
+router.get('/edit/:id', async (req, res) => {
+  try {
+    const catway = await Catway.findById(req.params.id);
+    if (!catway) return res.status(404).send('Catway introuvable');
+    res.render('editCatway', { catway }); // ce fichier ejs doit exister dans /views
+  } catch (err) {
+    res.status(500).send('Erreur serveur');
+  }
+});
+
+// 6. Modifier un catway (seul l'état peut être modifié)
 router.put('/:id', async (req, res) => {
   const { catwayState } = req.body;  // On ne modifie que l'état du catway
   try {
@@ -53,18 +72,18 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// 5. Supprimer un catway
+// 7. Supprimer un catway
 router.delete('/:id', async (req, res) => {
   try {
     const catway = await Catway.findByIdAndDelete(req.params.id);
     if (!catway) return res.status(404).json({ error: 'Catway not found' });
-    res.json({ message: 'Catway deleted successfully' });
+    res.redirect('/catways'); // Rediriger vers la liste après suppression
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// 6. Importer les catways depuis le fichier catways.json
+// 8. Importer les catways depuis le fichier catways.json
 router.get('/import/json', async (req, res) => {
   try {
     const filePath = path.join(__dirname, '..', 'data', 'catways.json');
