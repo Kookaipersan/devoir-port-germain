@@ -5,6 +5,8 @@ const path = require('path');
 const app = express();
 const session = require('express-session');
 const methodOverride = require('method-override');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
 
 // Importation des modèles
 const Catway = require('./models/Catway');
@@ -51,6 +53,8 @@ app.use('/login', authRouter);  // Définir la route /login
 app.use('/users', userRoutes);  // Enregistre les routes pour /users
 app.use('/reservations', reservationsRouter);  // Enregistre les routes pour /reservations
 
+//utilisation de Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Route pour la page d'accueil
 app.get('/', (req, res) => {
     res.render('home', {
