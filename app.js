@@ -35,7 +35,7 @@ app.use(session({
     cookie: { secure: false }  
 }));
 app.get('/signup', (req, res) => {
-    res.render('signup');  // Assurez-vous que le fichier signup.ejs existe dans le répertoire views
+    res.render('signup');  
 });
 
 // Configuration d'EJS comme moteur de template
