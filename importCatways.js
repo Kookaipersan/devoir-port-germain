@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
-const Catway = require('./models/Catway'); // Assure-toi que le modèle Catway est bien défini dans models/Catway.js
+const Catway = require('./models/Catway'); 
 
 // Connexion à la base de données
 mongoose.connect('mongodb://localhost:27017/RUSSELL/CATWAYS', {

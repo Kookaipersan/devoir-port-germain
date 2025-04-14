@@ -1,3 +1,5 @@
+//models/Catways.js
+
 const mongoose = require('mongoose');
 
 const CatwaySchema = new mongoose.Schema({

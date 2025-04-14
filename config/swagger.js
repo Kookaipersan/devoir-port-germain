@@ -9,13 +9,14 @@ const options = {
       version: '1.0.0',
       description: 'Documentation de l’API des réservations de catways',
     },
+    //serveur de connexion
     servers: [
       {
-        url: 'http://localhost:3000', // Change si ton app tourne ailleurs
+        url: 'http://localhost:3000', 
       },
     ],
   },
-  apis: ['./routes/*.js'], // <- On va documenter dans les routes
+  apis: ['./routes/*.js'], 
 };
 
 const swaggerSpec = swaggerJSDoc(options);

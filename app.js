@@ -32,7 +32,7 @@ app.use(session({
     secret: 'votre_clé_secrète',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }  // mettez `secure: true` si vous utilisez HTTPS
+    cookie: { secure: false }  
 }));
 app.get('/signup', (req, res) => {
     res.render('signup');  // Assurez-vous que le fichier signup.ejs existe dans le répertoire views

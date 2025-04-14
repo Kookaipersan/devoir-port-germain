@@ -528,9 +528,9 @@ router.get('/my-reservations', async (req, res) => {
  *         description: Erreur serveur
  */
 
-// -----------------------------
+
 // IMPORT JSON
-// -----------------------------
+
 router.get('/import/json', async (req, res) => {
   const filePath = path.join(__dirname, '..', 'data', 'reservations.json');
   if (!fs.existsSync(filePath)) {
@@ -541,7 +541,7 @@ router.get('/import/json', async (req, res) => {
     const jsonData = fs.readFileSync(filePath, 'utf-8');
     const reservations = JSON.parse(jsonData);
 
-    await Reservation.deleteMany(); // vide la collection si besoin
+    await Reservation.deleteMany(); 
     await Reservation.insertMany(reservations);
 
     res.status(200).json({ message: 'Importation réussie', importedCount: reservations.length });

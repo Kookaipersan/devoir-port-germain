@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: 8, // Longueur minimale du mot de passe
+    minlength: 8, // Longueur du mot de passe 8
   },
 });
 
@@ -27,7 +27,7 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-// Comparer le mot de passe en clair avec le mot de passe haché
+// Comparaison du mot de  passe en clair avec le mot de passe haché
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };

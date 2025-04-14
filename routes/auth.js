@@ -33,6 +33,7 @@ const router = express.Router();
  *       500:
  *         description: Erreur serveur interne
  */
+
 // Route de connexion
 router.post('/', async (req, res) => {
     const { email, password } = req.body;
