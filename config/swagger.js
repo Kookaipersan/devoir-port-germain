@@ -1,6 +1,8 @@
 // config/swagger.js
 const swaggerJSDoc = require('swagger-jsdoc');
 
+const serverUrl = process.env.SERVER_URL || 'http://localhost:3000';
+
 const options = {
   definition: {
     openapi: '3.0.0',
@@ -9,15 +11,15 @@ const options = {
       version: '1.0.0',
       description: 'Documentation de l’API des réservations de catways',
     },
-    //serveur de connexion
     servers: [
       {
-        url: 'http://localhost:3000', 
+        url: serverUrl,
       },
     ],
   },
-  apis: ['./routes/*.js'], 
+  apis: ['./routes/*.js'],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
 module.exports = swaggerSpec;
+
