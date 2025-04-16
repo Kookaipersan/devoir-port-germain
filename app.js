@@ -29,7 +29,7 @@ mongoose.connection.once('open', () => {
 
 // Configuration de la session
 app.use(session({
-    secret: 'votre_clé_secrète',
+    secret: process.env.SESSION_SECRET || 'default_secret',
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false }  
